@@ -4,12 +4,12 @@ import numpy as np
 import networkx as nx
 import pandas as pd
 from pyproj import Transformer, CRS
-import copy
 import json
 import psycopg2
 from tqdm import tqdm
 from shapely import wkt, wkb
 import argparse
+from functools import wraps
 import geopandas as gpd
 
 import trackintel as ti
@@ -23,15 +23,73 @@ from graph_trackintel.graph_utils import (
 )
 
 epsg_for_study = {
-    "gc1": "EPSG:21781",
-    "gc2": "EPSG:21781",
-    "yumuv": "EPSG:21781",
+    "gc1": 21781,
+    "gc2": 21781,
+    "yumuv": 21781,
 }
+
+
+def get_con():
+    DBLOGIN_FILE = os.path.join("dblogin.json")
+    with open(DBLOGIN_FILE) as json_file:
+        LOGIN_DATA = json.load(json_file)
+
+    con = psycopg2.connect(
+        dbname=LOGIN_DATA["database"],
+        user=LOGIN_DATA["user"],
+        password=LOGIN_DATA["password"],
+        host=LOGIN_DATA["host"],
+        port=LOGIN_DATA["port"],
+    )
+    return con
+
+
+def download_data(study, engine, has_trips=True):
+    """Download data of one study from database"""
+
+    def to_datetime(df):
+        df["started_at"] = pd.to_datetime(df["started_at"], utc=True)
+        df["finished_at"] = pd.to_datetime(df["finished_at"], utc=True)
+        return df
+
+    exclude_purpose_tist = [
+        "Light Rail",
+        "Subway",
+        "Platform",
+        "Trail",
+        "Road",
+        "Train",
+        "Bus Line",
+    ]
+
+    print("\t download staypoints")
+    sp = gpd.read_postgis(
+        sql="select * from {}.{}".format(study, "staypoints"),
+        con=engine,
+        geom_col="geom",
+        index_col="id",
+    )
+    sp = to_datetime(sp)
+
+    print("\t download locations")
+    sql = f"SELECT * FROM {study}.locations"
+    locs = ti.io.read_locations_postgis(sql, con=engine)
+
+    # studies with trips
+    if has_trips:
+        print("\t download trips")
+        trips = ti.io.read_trips_postgis(f"select * from {study}.trips", con=engine)
+    # studies without trips (Foursquare)
+    else:
+        sp = sp[~sp["purpose"].isin(exclude_purpose_tist)]
+        trips = None
+    return (sp, locs, trips)
 
 
 def to_series(func):
     """Decorator to transform tuple into a series"""
 
+    @wraps(func)
     def add_series(center, home_center):
         normed_center = func(center.x, center.y, home_center)
         return pd.Series(normed_center, index=["x_normed", "y_normed"])
@@ -68,7 +126,7 @@ def project_normalize_coordinates(node_feats, transformer=None, crs=None):
                 proj_y - home_center.y,
             )
         else:  # fall back to haversine
-            return get_haversine_displacement(x, y, home_center)
+            return get_haversine_displacement.__wrapped__(x, y, home_center)
 
     if transformer is not None:
         # get bounds
@@ -143,6 +201,36 @@ def generate_graph(
     return AG
 
 
+def filter_for_time_period(sp_user, locs_user, part_start_date, part_end_date, trips_user=None):
+    # # Split into parts of equal size --> not good!
+    # if k < nr_parts - 1:
+    #     sp_user_k = sorted_sp.iloc[k * cutoff : (k + 1) * cutoff]
+    # else:
+    #     sp_user_k = sorted_sp.iloc[k * cutoff :]
+    # locs_user_k = locs_user[locs_user.index.isin(sp_user_k["location_id"])]
+    # print(
+    #     np.min(sp_user_k["location_id"]),
+    #     np.min(locs_user_k.index),
+    # )
+    # filter for current time period --> use trips if available to filter time
+    if trips_user is not None:
+        trips_user_k = trips_user[
+            (trips_user["started_at"] < part_end_date) & (trips_user["started_at"] >= part_start_date)
+        ]
+        # filter staypoints by trips because we later form the graph based on the trips!
+        sp_user_k = sp_user[
+            (sp_user.index.isin(trips_user_k["origin_staypoint_id"]))
+            | (sp_user.index.isin(trips_user_k["destination_staypoint_id"]))
+        ]
+
+    else:
+        trips_user_k = None
+        sp_user_k = sorted_sp[(sorted_sp["started_at"] < part_end_date) & (sorted_sp["started_at"] >= part_start_date)]
+    locs_user_k = locs_user[locs_user.index.isin(sp_user_k["location_id"])]
+
+    return sp_user_k, locs_user_k, trips_user_k
+
+
 def read_staypoints_csv(
     *args,
     columns=None,
@@ -179,8 +267,15 @@ if __name__ == "__main__":
         "-n",
         "--node_thresh",
         type=int,
-        default=30,
+        default=10,
         help="Minimum number of nodes to include the graph",
+    )
+    parser.add_argument(
+        "-d",
+        "--dataset",
+        type=str,
+        default="tist_toph100",
+        help="Which dataset - default Foursquare, could be gc1, gc2, geolife etc",
     )
     parser.add_argument(
         "-s",
@@ -202,7 +297,7 @@ if __name__ == "__main__":
     save_name = save_name = f"{args.save_name}_data.pkl"
 
     # Foursquare dataset
-    study = "tist_toph100"
+    study = args.dataset
     gap_treshold = 12
 
     # initialize lists
@@ -220,18 +315,20 @@ if __name__ == "__main__":
         out_crs = CRS.from_epsg(epsg)
     else:
         transformer, out_crs = (None, None)
-    print("CRS", transformer, out_crs)
 
     # Load data
     print("Load data")
-    sp = read_staypoints_csv("staypoints.csv")
-    locs = ti.io.read_locations_csv("locations.csv")
-    trips = None
-    sp, locs
+    if study == "tist_toph100":
+        sp = read_staypoints_csv("staypoints.csv")
+        locs = ti.io.read_locations_csv("locations.csv")
+        trips = None
+    else:
+        conn = get_con()
+        sp, locs, trips = download_data(study, conn, has_trips=("tist" not in study))
 
     # Iterate over users and create graphs:
     for user_id in tqdm(locs["user_id"].unique()):
-        print()
+        print("---------------------")
         print(user_id)
 
         # Filter for user
@@ -258,39 +355,22 @@ if __name__ == "__main__":
         # cutoff = int(len(sorted_sp) / nr_parts)
 
         for k in range(nr_parts):
-            # # Split into parts of equal size --> not good!
-            # if k < nr_parts - 1:
-            #     sp_user_k = sorted_sp.iloc[k * cutoff : (k + 1) * cutoff]
-            # else:
-            #     sp_user_k = sorted_sp.iloc[k * cutoff :]
-            # locs_user_k = locs_user[locs_user.index.isin(sp_user_k["location_id"])]
-            # print(
-            #     np.min(sp_user_k["location_id"]),
-            #     np.min(locs_user_k.index),
-            # )
-            # # Restrict to the current time frame
+            # Restrict to this time period (k-th time bin)
             part_start_date, part_end_date = (min_date + k * time_period, min_date + (k + 1) * time_period)
-            # filter for current time period
-            sp_user_k = sorted_sp[
-                (sorted_sp["started_at"] < part_end_date) & (sorted_sp["started_at"] >= part_start_date)
-            ]
-            locs_user_k = locs_user[locs_user.index.isin(sp_user_k["location_id"])]
+            sp_user_k, locs_user_k, trips_user_k = filter_for_time_period(
+                sp_user, locs_user, part_start_date, part_end_date, trips_user=trips_user
+            )
             if len(sp_user_k) == 0:
                 print("Warning: zero staypoints in time bin, continue")
                 continue
             print("start and end date", sp_user_k.iloc[0].loc["started_at"], sp_user_k.iloc[-1].loc["started_at"])
-
-            if trips_user is not None:
-                trips_user_k = trips_user[
-                    (trips_user["started_at"] < part_end_date) & (trips_user["started_at"] >= part_start_date)
-                ]
 
             # Generate graph
             ag = generate_graph(
                 locs_user_k,
                 sp_user_k,
                 study,
-                trips_user_k=None,
+                trips_user=trips_user_k,
                 gap_threshold=gap_treshold,
             )
             assert ag.user_id == user_id
