@@ -1,3 +1,4 @@
+import argparse
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -151,7 +152,9 @@ def get_purpose_category(p):
 
 
 def save_attributes(node_feat, out_path="individual_assigment"):
-    node_feats = node_feat.drop(columns=["extent", "center", "node_id", "started_at"])
+    node_feats = node_feat.drop(columns=["center", "node_id", "started_at"])
+    if "extent" in node_feats:
+        node_feats = node_feat.drop(columns=["extent"])
 
     # normalize and rename distance from home attribute
     node_feats = node_feats.rename(columns={"distance": "dist_from_home"})
@@ -190,8 +193,6 @@ def save_net(adjacency, out_path="individual_assigment", save_num=0):
         index=False,
     )
 
-    print("Saved successfully", adj_df.shape)
-
 
 def get_common_locs(part_node_feat_list):
     common_ids = part_node_feat_list[0]
@@ -203,32 +204,63 @@ def get_common_locs(part_node_feat_list):
 
 
 if __name__ == "__main__":
-    in_path = os.path.join("..", "data", f"foursquare_graphs_data.pkl")
-    # output path
-    path = os.path.join("..", "data", "foursquare")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-o",
+        "--out_dir",
+        type=str,
+        default=os.path.join("..", "data", "foursquare"),
+        help="Which dataset - default Foursquare, could be gc1, gc2, geolife etc",
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        default=os.path.join("..", "data", f"foursquare_graphs_data.pkl"),
+        help="Name under which to save the data",
+    )
+    parser.add_argument(
+        "-t",
+        "--time_bins",
+        type=int,
+        default=3,
+        help="Number of time bins to save",
+    )
+
+    args = parser.parse_args()
+    num_bins = args.time_bins
+    in_path = args.input
+    path = args.out_dir
     os.makedirs(path, exist_ok=1)
 
     with open(in_path, "rb") as outfile:
         (user_id_list, adjacency_list, node_feat_list) = pickle.load(outfile)
 
     print("Loaded graph data", len(user_id_list), len(adjacency_list))
-    print(user_id_list)
+
     # get the indices of each user
-    id_list = [int(e.split("_")[2]) for e in user_id_list]
+    if "tist" in in_path or "foursquare" in in_path:
+        # tist_toph100_userid --> use part 2
+        id_list = [int(e.split("_")[2]) for e in user_id_list]
+    else:
+        id_list = [int(e.split("_")[1]) for e in user_id_list]
     unique_user_ids = np.unique(id_list)
     index_dict = {}
     for user_id in unique_user_ids:
         index_dict[user_id] = np.where(id_list == user_id)[0]
 
+    nr_valid_users = 0
     for user_id in unique_user_ids:
-        if len(index_dict[user_id]) < 3:
+        time_bins_from_dict = index_dict[user_id][:num_bins]
+        print("These time bins are available for the graph:", time_bins_from_dict)
+        if len(time_bins_from_dict) < num_bins:
             # skip the ones that have only 2 full timeslots
             continue
-        test_ids = [user_id_list[item] for item in index_dict[user_id]]
-        part_node_feats = [node_feat_list[item] for item in index_dict[user_id]]
+        test_ids = [user_id_list[item] for item in time_bins_from_dict]
+        part_node_feats = [node_feat_list[item] for item in time_bins_from_dict]
         common_locs = get_common_locs(part_node_feats)
 
-        if len(common_locs) < 20:
+        if len(common_locs) < 10:
             print("Graph too small, skip")
             # Too short
             continue
@@ -237,10 +269,10 @@ if __name__ == "__main__":
         out_path = os.path.join(path, str(user_id))
         os.makedirs(out_path, exist_ok=1)
 
-        print("user id", user_id, "inds", index_dict[user_id], "save as", out_path)
+        print("user id", user_id, "inds", time_bins_from_dict, "save as", out_path)
 
         # iterate over time steps
-        for i_ind, i in enumerate(index_dict[user_id]):
+        for i_ind, i in enumerate(time_bins_from_dict):
             if len(node_feat_list[i]) == len(common_locs):
                 print("already done")
                 continue
@@ -260,4 +292,6 @@ if __name__ == "__main__":
                 save_attributes(node_feat_list[i], out_path=out_path)
             # save graphs
             save_net(adjacency_list[i], out_path=out_path, save_num=i_ind)
-            print("saved", i)
+            print("saved", i, len(common_locs))
+        nr_valid_users += 1
+    print("Valid users", nr_valid_users, "out of", len(unique_user_ids))

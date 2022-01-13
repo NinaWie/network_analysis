@@ -121,9 +121,10 @@ def project_normalize_coordinates(node_feats, transformer=None, crs=None):
     def get_projected_displacement(x, y, home_center):
         if (x_min < x < x_max) and (y_min < y < y_max):
             proj_x, proj_y = transformer.transform(x, y)
+            home_x, home_y = transformer.transform(home_center.x, home_center.y)
             return (
-                proj_x - home_center.x,
-                proj_y - home_center.y,
+                proj_x - home_x,
+                proj_y - home_y,
             )
         else:  # fall back to haversine
             return get_haversine_displacement.__wrapped__(x, y, home_center)
