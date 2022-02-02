@@ -1,4 +1,4 @@
-*.csv
 dblogin.json
 .vscode/
 nw_data.code-workspace
+.DS_Store

@@ -320,8 +320,8 @@ if __name__ == "__main__":
     # Load data
     print("Load data")
     if study == "tist_toph100":
-        sp = read_staypoints_csv("staypoints.csv")
-        locs = ti.io.read_locations_csv("locations.csv")
+        sp = read_staypoints_csv(os.path.join("..", "data", "staypoints.csv"))
+        locs = ti.io.read_locations_csv(os.path.join("..", "data", "locations.csv"))
         trips = None
     else:
         conn = get_con()
@@ -418,7 +418,9 @@ if __name__ == "__main__":
             # node_feat_df["started_at"] = node_feat_df["started_at"].apply(
             #     average_hour
             # )
-            node_feat_df.drop(["finished_at", "extent"], axis=1, inplace=True)
+            node_feat_df.drop(["finished_at"], axis=1, inplace=True)
+            if "extent" in node_feat_df:
+                node_feat_df.drop(["extent"], axis=1, inplace=True)
 
             # Append
             user_id_list.append(f"{study}_{user_id}_{k}")
