@@ -10,7 +10,7 @@ import seaborn as sns
 matplotlib.rc("font", **{"size": 15})
 
 # Main parameter
-ds_name = "both"
+ds_name = "foursquare"
 filter_out_unconverged = True
 
 # collect results

@@ -6,8 +6,31 @@ The experiments in our paper are based on two datasets. Only the Foursquare data
 
 Create the graphs for a certain dataset and save as a pickle file as save_name
 ```
+cd python_scripts
 create_graphs.py [-h] [-n NODE_THRESH] [-d DATASET] [-s SAVE_NAME] [-t TIME_PERIOD]
 ```
+Our analysis was run with the current default values for the arguments.
+
+### Step 2: Preprocessing
+```
+cd python_scripts
+preprocessing.py [-h] [-o OUT_DIR] [-i INPUT] [-t TIME_BINS]
+```
+With the default parameters, this will take the output pkl file from Step 1 and preprocess the graphs and attributes. The results will be dumped in a folder `data/foursquare_120` (120 days).
+
+### Step 3: Execute R scripts
+
+The R Scripts in the folder `r_scripts` automatically take the graphs and attributes that were produced in Step 2. 
+Execute both scripts `r_scripts/qap_mobility.r` and `r_scripts/saom_mobility.r`
+
+### Step 4: Analze results
+
+Run 
+```
+cd python_scripts
+python analyze.py
+```
+The input folders are hardcoded in the script.
 
 ## The Foursquare dataset:
 

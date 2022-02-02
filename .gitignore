@@ -2,3 +2,8 @@ dblogin.json
 .vscode/
 nw_data.code-workspace
 .DS_Store
+.Rhistory
+mobility.txt
+*.pkl
+*.out
+results*

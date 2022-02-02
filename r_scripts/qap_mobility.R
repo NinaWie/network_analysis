@@ -1,3 +1,5 @@
+setwd("network_analysis")
+
 library(sna)
 library(network)
 

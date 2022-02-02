@@ -209,7 +209,7 @@ if __name__ == "__main__":
         "-o",
         "--out_dir",
         type=str,
-        default=os.path.join("..", "data", "foursquare"),
+        default=os.path.join("..", "data", "foursquare_120"),
         help="Which dataset - default Foursquare, could be gc1, gc2, geolife etc",
     )
     parser.add_argument(

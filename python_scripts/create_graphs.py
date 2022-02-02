@@ -289,7 +289,7 @@ if __name__ == "__main__":
         "-t",
         "--time_period",
         type=int,
-        default=56,
+        default=120,
         help="How many days for one time bin",
     )
     args = parser.parse_args()
@@ -320,8 +320,8 @@ if __name__ == "__main__":
     # Load data
     print("Load data")
     if study == "tist_toph100":
-        sp = read_staypoints_csv(os.path.join("..", "data", "staypoints.csv"))
-        locs = ti.io.read_locations_csv(os.path.join("..", "data", "locations.csv"))
+        sp = read_staypoints_csv(os.path.join("..", "data", "staypoints.csv")).set_index("id")
+        locs = ti.io.read_locations_csv(os.path.join("..", "data", "locations.csv")).set_index("id")
         trips = None
     else:
         conn = get_con()
