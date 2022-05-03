@@ -71,7 +71,7 @@ With the default parameters, this will take the output pkl file from Step 1 and 
 ### Step 3: Execute R scripts
 
 The R Scripts in the folder `r_scripts` automatically take the graphs and attributes that were produced in Step 2. 
-Execute both scripts `r_scripts/qap_mobility.r` and `r_scripts/saom_mobility.r`
+Simply execute both scripts `qap_mobility.r` and `saom_mobility.r` (in any order). See above for instructions how to install the necessary libraries with `renv::restore()`
 
 Note: Both scripts will take more than 1 hour to run! SOAM and QAP models are fitted for all users.
 
