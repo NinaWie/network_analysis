@@ -3,9 +3,9 @@
 library(sna)
 library(network)
 library(RSiena)
-library('here')
+library(here)
 setwd(here())
-source("r_scripts/printSiena.R")
+source("printSiena.R")
 
 jaccard <- function(first_net, sec_net) {
   diff <- first_net-sec_net
@@ -141,7 +141,7 @@ run_saom <- function (net1, net2, net3, attr, dyad_distances, userID, out_path, 
 
 
 #### Iterate over all users, do saom for time graphs
-base_path <- "data/foursquare_120"
+base_path <- "../data/foursquare_120"
 possible_users = list.files(base_path)
 
 for (i in 1:length(possible_users)) {

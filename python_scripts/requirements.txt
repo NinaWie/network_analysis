@@ -1,159 +1,25 @@
-alabaster==0.7.12
-anyio==3.2.1
-appdirs==1.4.4
-appnope==0.1.2
-argon2-cffi==20.1.0
-astroid @ file:///opt/concourse/worker/volumes/live/5aff3c6b-d8ac-4e74-4846-0f446794397d/volume/astroid_1628063157520/work
-async-generator==1.10
-attrs @ file:///tmp/build/80754af9/attrs_1620827162558/work
-Babel==2.9.1
-backcall==0.2.0
-black==21.7b0
-bleach==3.3.0
-Bottleneck @ file:///opt/concourse/worker/volumes/live/ac8c8ef3-2ed0-42e9-6ec0-5bb05ad938f6/volume/bottleneck_1607575111469/work
-branca==0.4.2
-brotlipy @ file:///Users/runner/miniforge3/conda-bld/brotlipy_1636012303255/work
-certifi==2021.10.8
-cffi @ file:///opt/concourse/worker/volumes/live/976f8942-f51d-4f0e-7352-2a10f0820d0e/volume/cffi_1625814703974/work
-chardet==4.0.0
-charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1637858084653/work
-click==8.0.1
-click-plugins==1.1.1
-cligj==0.7.2
-colorama @ file:///home/conda/feedstock_root/build_artifacts/colorama_1602866480661/work
-cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography_1637648800227/work
-cycler==0.10.0
-debugpy==1.3.0
-decorator==5.0.9
-defusedxml==0.7.1
-descartes==1.1.0
-docutils==0.16
-entrypoints==0.3
-et-xmlfile==1.1.0
-Fiona==1.8.20
-folium==0.12.1
-fonttools==4.25.0
-gensim==4.1.2
-GeoAlchemy2==0.9.1
-geographiclib==1.52
-geojson==2.5.0
-geopandas==0.10.0
-geopy==2.2.0
-googledrivedownloader @ file:///home/conda/feedstock_root/build_artifacts/googledrivedownloader_1619807768586/work
-greenlet==1.1.0
-h3==3.7.3
-h5py==3.6.0
-idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1609836280497/work
-imagesize==1.2.0
-importlib-metadata @ file:///opt/concourse/worker/volumes/live/bdafb81c-7edc-4122-77fe-a69839ec3c71/volume/importlib-metadata_1617877361684/work
-iniconfig==1.1.1
-ipykernel==6.0.1
-ipython==7.25.0
-ipython-genutils==0.2.0
-isort @ file:///tmp/build/80754af9/isort_1628603791788/work
-jedi==0.18.0
-Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1636510082894/work
-joblib @ file:///home/conda/feedstock_root/build_artifacts/joblib_1633637554808/work
-json5==0.9.6
-jsonschema==3.2.0
-lazy-object-proxy @ file:///opt/concourse/worker/volumes/live/a169db40-97bf-4f51-6893-dc751f705b7b/volume/lazy-object-proxy_1616529067444/work
-MarkupSafe @ file:///Users/runner/miniforge3/conda-bld/markupsafe_1635833678538/work
-matplotlib @ file:///opt/concourse/worker/volumes/live/ea31f923-d5bd-4af7-6d95-b910b4a0fa5f/volume/matplotlib-suite_1628011455335/work
-matplotlib-inline==0.1.2
-mccabe==0.6.1
-mistune==0.8.4
-mkl-fft==1.3.0
-mkl-random @ file:///opt/concourse/worker/volumes/live/0cda23d8-7460-44b2-7e5d-3c76a8a0ca7e/volume/mkl_random_1626186083266/work
-mkl-service==2.4.0
-mpmath==1.2.1
-munch==2.5.0
-munkres==1.1.4
-mypy-extensions==0.4.3
-nbclassic==0.3.1
-nbclient==0.5.3
-nbconvert==6.1.0
-nbformat==5.1.3
-nest-asyncio==1.5.1
-networkx @ file:///home/conda/feedstock_root/build_artifacts/networkx_1635253012265/work
-notebook==6.4.0
-numexpr @ file:///opt/concourse/worker/volumes/live/8a490d79-0e07-4fed-40fc-a78f896e4811/volume/numexpr_1618856522733/work
-numpy==1.22.0
-olefile==0.46
-openpyxl==3.0.9
-osmnx==1.1.1
-packaging==21.0
-pandas==1.3.1
-pandocfilters==1.4.3
-parso==0.8.2
-pathspec==0.9.0
-patsy==0.5.1
-pexpect==4.8.0
-pickleshare==0.7.5
-Pillow @ file:///opt/concourse/worker/volumes/live/140f8506-0993-42b0-466b-ccbbcb5df83e/volume/pillow_1625655825783/work
-Pint==0.17
-pluggy==0.13.1
-powerlaw==1.5
--e git+https://github.com/mie-lab/predict-visits.git@02214b4b7d32e8d6d2c1e15d5fa043da27fb581b#egg=predict_visits
-prometheus-client==0.11.0
-prompt-toolkit==3.0.19
-psutil==5.9.0
-psycopg2 @ file:///opt/concourse/worker/volumes/live/7541fe58-2a45-4073-5d69-313e733fc729/volume/psycopg2_1612298592535/work
-ptyprocess==0.7.0
-py==1.10.0
-py-postgresql==1.2.2
-pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1636257122734/work
-pygeos==0.12.0
-Pygments==2.9.0
-pylint @ file:///opt/concourse/worker/volumes/live/110f293a-445f-477b-4041-2e00ae784083/volume/pylint_1627536795404/work
-pymongo==4.0.1
-pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1633192417276/work
-pyparsing @ file:///home/linux1/recipes/ci/pyparsing_1610983426697/work
-pyproj==3.1.0
-pyrsistent==0.18.0
-PySocks @ file:///Users/runner/miniforge3/conda-bld/pysocks_1635862544510/work
-pytest==6.2.4
-python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
-python-igraph==0.9.6
-python-louvain @ file:///home/conda/feedstock_root/build_artifacts/python-louvain_1609125227889/work
-pytz @ file:///tmp/build/80754af9/pytz_1612215392582/work
-PyYAML @ file:///Users/runner/miniforge3/conda-bld/pyyaml_1636139899434/work
-pyzmq==22.1.0
-regex==2021.8.21
-requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1637771257551/work
-requests-unixsocket==0.2.0
-rstcheck==3.3.1
-Rtree==0.9.7
-scikit-learn @ file:///opt/concourse/worker/volumes/live/83f46a43-da2a-467b-5581-ed2cbd128684/volume/scikit-learn_1621370403088/work
-scikit-mobility==1.2.2
-scipy==1.7.0
-seaborn @ file:///tmp/build/80754af9/seaborn_1629307859561/work
-Send2Trash==1.7.1
-Shapely==1.8.0
-similaritymeasures==0.4.4
-six @ file:///tmp/build/80754af9/six_1623709665295/work
-smart-open==5.2.1
-smopy==0.0.7
-sniffio==1.2.0
-snowballstemmer==2.1.0
-SQLAlchemy==1.4.20
-statsmodels==0.12.2
-tabulate==0.8.9
-terminado==0.10.1
-testpath==0.5.0
-texttable==1.6.4
-threadpoolctl @ file:///home/conda/feedstock_root/build_artifacts/threadpoolctl_1633102299089/work
-toml @ file:///tmp/build/80754af9/toml_1616166611790/work
-tomli==1.2.1
-tornado @ file:///opt/concourse/worker/volumes/live/2c1a63a2-006b-48ee-56b9-0cfe8b4927f9/volume/tornado_1606942321278/work
-tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1632160078689/work
--e git+git@github.com:NinaWie/trackintel.git@9843bcf60e0aad29ef750ac85e9d57578e67a525#egg=trackintel
-traitlets==5.0.5
-typed-ast==1.4.3
-typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1624965014186/work
-urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1632350318291/work
-wcwidth==0.2.5
-webencodings==0.5.1
-websocket-client==1.1.0
-wrapt @ file:///opt/concourse/worker/volumes/live/1381ca3b-f984-4f5c-4f46-a67ca4eeffa5/volume/wrapt_1607574524589/work
-yacs==0.1.6
-zipp @ file:///tmp/build/80754af9/zipp_1625570634446/work
+descartes>=1.1.0
+Fiona>=1.8.20
+geojson>=2.5.0
+geopandas==0.9.0
+geopy>=2.2.0
+matplotlib >= 3.4
+networkx >= 2.7
+numpy>=1.22.0
+osmnx>=1.1.1
+pandas>=1.3.1
+pandocfilters>=1.4.3
+psutil>=5.9.0
+psycopg2 >= 2.8
+pygeos>=0.12.0
+Pygments>=2.9.0
+pyproj>=3.1.0
+pytest>=6.2.4
+scikit-learn >= 1.0.0
+scikit-mobility>=1.2.2
+scipy>=1.7.0
+seaborn >= 0.10.0
+Shapely>=1.8.0
+smopy>=0.0.7
+tabulate>=0.8.9
+trackintel==1.1.5

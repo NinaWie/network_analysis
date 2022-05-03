@@ -1,6 +1,6 @@
 library(sna)
 library(network)
-library('here')
+library(here)
 setwd(here())
 
 run_qap <- function (net, attr, distances, userID, timeBin, base_path) {
@@ -57,7 +57,7 @@ set.seed(42)
 
 
 #### Iterate over all users, do QAP for all graphs
-base_path <- "data/foursquare_120"
+base_path <- "../data/foursquare_120"
 possible_users = list.files(base_path)
 
 for (i in 1:length(possible_users)) {

@@ -36,11 +36,17 @@ install.packages("RSiena")
 
 In Python, create a new virtual environment called "agile_env" and install all requirements with the following steps:
 ```
+cd python_scripts
 python -m venv agile_env
-pip activate agile_env
+source agile_env/bin/activate
 pip install -r requirements.txt
 export PYTHONPATH="graph-trackintel"
 ```
+
+Troubleshooting: If the installation of psychopg2 fails, install it manually:
+```
+python -m pip install psycopg2-binary
+````
 
 ## Reproducing the results
 
@@ -48,17 +54,17 @@ The following steps must be executed sequentially in order to load, preprocess a
 
 ### Step 1 : create graphs
 
-Create the graphs for a certain dataset and save as a pickle file as save_name
+Create the graphs for a certain dataset and save as a pickle file in the folder `data`.
 ```
 cd python_scripts
-python create_graphs.py [-h] [-n NODE_THRESH] [-d DATASET] [-s SAVE_NAME] [-t TIME_PERIOD]
+python create_graphs.py
 ```
-Our analysis was run with the current default values for the arguments.
+Our analysis was run with the current default values for the arguments, but other parameters can be specified. It takes only around 20 seconds to run.
 
 ### Step 2: Preprocessing
 ```
 cd python_scripts
-python preprocessing.py [-h] [-o OUT_DIR] [-i INPUT] [-t TIME_BINS]
+python preprocessing.py
 ```
 With the default parameters, this will take the output pkl file from Step 1 and preprocess the graphs and attributes. The results will be dumped in a folder `data/foursquare_120` (120 days).
 
@@ -66,6 +72,8 @@ With the default parameters, this will take the output pkl file from Step 1 and 
 
 The R Scripts in the folder `r_scripts` automatically take the graphs and attributes that were produced in Step 2. 
 Execute both scripts `r_scripts/qap_mobility.r` and `r_scripts/saom_mobility.r`
+
+Note: Both scripts will take more than 1 hour to run! SOAM and QAP models are fitted for all users.
 
 ### Step 4: Analze results
 
