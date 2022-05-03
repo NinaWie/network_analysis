@@ -2,19 +2,63 @@
 
 The experiments in our paper are based on two datasets. Only the Foursquare data is publicly available. The code published here can be used to reproduce our analysis on the Foursquare dataset. In the folder `data`, we provide the preprocessed data of a small excerpt of the original dataset published in [@yang2015nationtelescope] and [@yang2015participatory] (see below). 
 
+## Installation:
+
+Clone the repository:
+```
+git clone https://github.com/NinaWie/network_analysis.git
+```
+
+We assume that the following prerequesites are installed: 
+* python >= 3.6
+* R (version 4.1.2 is used here)
+
+### R package installation
+
+In R, install renv to create a virtual environment to run the scripts in this repo:
+```
+install.packages("renv")
+```
+In the folder `r_scripts` you can find a lockfile (explanation see [here](https://rstudio.github.io/renv/)) called `renv.lock`. The required libraries can be installed automatically with renv by running
+```
+renv::restore()
+```
+
+##### Manual installation
+If not using renv, you can also install the required packages manually. The following libraries are required: `sna`, `network`, `RSiena` and can be installed with the following:
+```
+install.packages("sna")
+install.packages("network")
+install.packages("RSiena")
+```
+
+### Python installation
+
+In Python, create a new virtual environment called "agile_env" and install all requirements with the following steps:
+```
+python -m venv agile_env
+pip activate agile_env
+pip install -r requirements.txt
+export PYTHONPATH="graph-trackintel"
+```
+
+## Reproducing the results
+
+The following steps must be executed sequentially in order to load, preprocess and analyze the data
+
 ### Step 1 : create graphs
 
 Create the graphs for a certain dataset and save as a pickle file as save_name
 ```
 cd python_scripts
-create_graphs.py [-h] [-n NODE_THRESH] [-d DATASET] [-s SAVE_NAME] [-t TIME_PERIOD]
+python create_graphs.py [-h] [-n NODE_THRESH] [-d DATASET] [-s SAVE_NAME] [-t TIME_PERIOD]
 ```
 Our analysis was run with the current default values for the arguments.
 
 ### Step 2: Preprocessing
 ```
 cd python_scripts
-preprocessing.py [-h] [-o OUT_DIR] [-i INPUT] [-t TIME_BINS]
+python preprocessing.py [-h] [-o OUT_DIR] [-i INPUT] [-t TIME_BINS]
 ```
 With the default parameters, this will take the output pkl file from Step 1 and preprocess the graphs and attributes. The results will be dumped in a folder `data/foursquare_120` (120 days).
 
@@ -32,9 +76,9 @@ python analyze.py
 ```
 The input folders are hardcoded in the script.
 
-## The Foursquare dataset:
+## Acknowledgements:
 
-The material published here was taken from the following sources. 
+The Foursquares dataset user for reproducability here was taken from the following sources:
 
 ```bib
 @article{yang2015nationtelescope,

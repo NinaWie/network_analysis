@@ -1,13 +1,12 @@
 import os
 import pickle
 import numpy as np
-import networkx as nx
 import pandas as pd
 from pyproj import Transformer, CRS
 import json
 import psycopg2
 from tqdm import tqdm
-from shapely import wkt, wkb
+from shapely import wkt
 import argparse
 from functools import wraps
 import geopandas as gpd

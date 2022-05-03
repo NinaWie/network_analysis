@@ -1,8 +1,10 @@
-setwd("network_analysis")
+
 
 library(sna)
 library(network)
 library(RSiena)
+library('here')
+setwd(here())
 source("r_scripts/printSiena.R")
 
 jaccard <- function(first_net, sec_net) {

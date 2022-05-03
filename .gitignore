@@ -7,3 +7,9 @@ mobility.txt
 *.pkl
 *.out
 results*
+.Rproj.user
+r_scripts/r_scripts.Rproj
+r_scripts/.Rprofile
+data/gc1_120/
+data/foursquare_120/
+r_scripts/renv/

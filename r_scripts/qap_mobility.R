@@ -1,7 +1,7 @@
-setwd("network_analysis")
-
 library(sna)
 library(network)
+library('here')
+setwd(here())
 
 run_qap <- function (net, attr, distances, userID, timeBin, base_path) {
   print(sprintf("Run QAP user %s time step %s", userID, as.character(timeBin)))
