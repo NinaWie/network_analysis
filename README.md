@@ -4,9 +4,9 @@ The experiments in our paper are based on two datasets. Only the Foursquare data
 
 ## Installation:
 
-Clone the repository:
+Clone the repository, **with the submodule included**:
 ```
-git clone https://github.com/NinaWie/network_analysis.git
+git clone --recurse-submodules https://github.com/NinaWie/network_analysis.git
 ```
 
 We assume that the following prerequesites are installed: 
