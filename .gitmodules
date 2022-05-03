@@ -1,0 +1,3 @@
+[submodule "python_scripts/graph-trackintel"]
+	path = python_scripts/graph-trackintel
+	url = https://github.com/mie-lab/graph-trackintel.git

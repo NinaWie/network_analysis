@@ -63,7 +63,7 @@ for base_path in base_path_list:
             coeff_3.append(qap["ESt."].values)
             pvalues_3.append(qap["p-value"].values)
 
-            if folder == "310" and j == 0:
+            if folder == "327" and j == 2:
                 print("USER 310 - QAP")
                 print(qap)
                 print(qap.drop(columns=["exp(Est.)"]).to_latex(float_format="%.2f"))
@@ -91,7 +91,7 @@ for base_path in base_path_list:
         elif filter_out_unconverged:
             continue
 
-        if folder == "310":
+        if folder == "327":
             print("USER 310 - SOAM")
             print(
                 soam.drop(columns=["dependent", "jac1", "jac2", "sig.", "tconv_max", "Unnamed: 0"])
@@ -168,12 +168,12 @@ for i in range(4):
     print("Negative correlation significant in", sum(neg_coeff_purpose < 0.05) / overall_coeff)
 
 
-matplotlib.rc("font", **{"size": 20})
-plt.figure(figsize=(15, 10))
+matplotlib.rc("font", **{"size": 22})
+fig = plt.figure(figsize=(15, 10))
 for j, col in enumerate(
-    ["Intercept", "Distance (between A and B)", "Distance from home (of B)", "Same purpose (of A and B)"]
+    ["Intercept", "Distance (pairwise)", "Distance from home (alter)", "Same purpose (of A and B)"]
 ):
-    plt.subplot(2, 2, j + 1)
+    ax = plt.subplot(2, 2, j + 1)
     if "Distance" in col:
         bins = 140
     else:
@@ -181,13 +181,20 @@ for j, col in enumerate(
     temp_df = pd.DataFrame()
     temp_df["temp"] = avg_coeff[:, j]
     temp_df["Dataset"] = dataset
-    histplt = sns.histplot(data=temp_df, x="temp", hue="Dataset", bins=bins, multiple="stack", stat="percent")
-    plt.xlabel(col)
-    plt.ylabel("Percent of users", fontsize=20)
-    plt.xticks(fontsize=20)
-    if "Distance" in col:
-        plt.xlim(-0.25, 0.05)
+    histplt = sns.histplot(data=temp_df, x="temp", ax=ax, hue="Dataset", bins=bins, multiple="stack", stat="percent")
+    if j > 0:
+        ax.get_legend().remove()
+    ax.set_title(col, fontsize=20)
+    ax.set_xlabel("")
+    ax.set_ylabel("Number of users", fontsize=20)
+    ax.tick_params(axis="x", which="major", pad=5)
+    # plt.xticks(fontsize=20, pad=30)
     plt.tight_layout()
+    if "Distance" in col:
+        plt.xlim(-0.28, 0.05)
+    plt.ylim(0, 43)
+
+# plt.legend(custom_lines, ["Green Class", "Foursquare"], loc=(-0.6, 2.3), ncol=2)
 plt.savefig(os.path.join("..", f"results_{ds_name}", "results_qap.pdf"))
 # plt.show()
 
