@@ -132,7 +132,7 @@ run_saom <- function (net1, net2, net3, attr, dyad_distances, userID, out_path, 
   output$tconv_max[1] <- saom_model$tconv.max
   
   # Write csv with outputs
-  write.csv(output, sprintf("%s/%s/saom_fitted_1.csv", out_path, userID)) # TODO: switch back before code submission
+  write.csv(output, sprintf("%s/%s/saom_fitted.csv", out_path, userID))
   
   if (run_gof) {
     saom_get_gof(saom_model, sprintf("%s/%s", out_path, userID))
