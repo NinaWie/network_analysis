@@ -15,19 +15,19 @@ filter_out_unconverged = True
 
 # collect results
 nr_files = 0
-# soam
+# saom
 tconv_ok = 0
 tconv_single_ok = 0
 jaccard1, jaccard2 = [], []
-soam_tables = []
+saom_tables = []
 # qap
 coefficients = []
 qap_pvalues = []
 # Remember which dataset
 dataset = []
 dataset_dict = {"gc1": "Green Class", "foursquare": "Foursquare"}
-# remember whether soam was included or not
-soam_included = []
+# remember whether saom was included or not
+saom_included = []
 
 os.makedirs(os.path.join("..", f"results_{ds_name}"), exist_ok=True)
 
@@ -47,7 +47,7 @@ for base_path in base_path_list:
         # read files
         if folder[0] == ".":
             continue
-        path_soam = os.path.join(base_path, folder, "soam_fitted.csv")
+        path_saom = os.path.join(base_path, folder, "saom_fitted.csv")
         path_qap = os.path.join(base_path, folder, "qap_fitted")
 
         nr_files += 1
@@ -70,21 +70,21 @@ for base_path in base_path_list:
         coefficients.append(coeff_3)
         qap_pvalues.append(pvalues_3)
 
-        # check soam
-        soam = pd.read_csv(path_soam)
+        # check saom
+        saom = pd.read_csv(path_saom)
 
         # save jaccard in any case
-        jaccard1.append(soam.loc[0, "jac1"])
-        jaccard2.append(soam.loc[0, "jac2"])
+        jaccard1.append(saom.loc[0, "jac1"])
+        jaccard2.append(saom.loc[0, "jac2"])
 
         dataset.append(dataset_dict[(base_path.split(os.sep)[-1]).split("_")[0]])
 
         # check overall convergence and filter out if required
-        if soam.loc[0, "tconv_max"] < 0.2:
+        if saom.loc[0, "tconv_max"] < 0.2:
             tconv_ok += 1
         elif filter_out_unconverged:
             continue
-        single_conv = soam["t.conv"].dropna().values
+        single_conv = saom["t.conv"].dropna().values
         # check single convergences and filter out if required
         if np.all(single_conv < 0.1):
             tconv_single_ok += 1
@@ -92,25 +92,25 @@ for base_path in base_path_list:
             continue
 
         if folder == "327":
-            print("USER 310 - SOAM")
+            print("USER 310 - saom")
             print(
-                soam.drop(columns=["dependent", "jac1", "jac2", "sig.", "tconv_max", "Unnamed: 0"])
+                saom.drop(columns=["dependent", "jac1", "jac2", "sig.", "tconv_max", "Unnamed: 0"])
                 .set_index("effect")
                 .to_latex(float_format="%.2f")
             )
 
-        part_soam = soam[["effect", "theta", "p.value"]]
-        part_soam.rename(
+        part_saom = saom[["effect", "theta", "p.value"]]
+        part_saom.rename(
             columns={"theta": "theta" + str(nr_files - 1), "p.value": "p" + str(nr_files - 1)}, inplace=True
         )
-        soam_tables.append(part_soam)
-        soam_included.append(nr_files - 1)
+        saom_tables.append(part_saom)
+        saom_included.append(nr_files - 1)
 
 
 print("Number of files:", nr_files)
 print("\n 1) Jaccard index results\n")
-print("SOAM: overall convergence rate is okay in", tconv_ok, "files")  #  / float(nr_files))
-print("SOAM: single convergence rate are okay in", tconv_single_ok, "files")
+print("saom: overall convergence rate is okay in", tconv_ok, "files")  #  / float(nr_files))
+print("saom: single convergence rate are okay in", tconv_single_ok, "files")
 print("__________________")
 print("Jaccard index analysis")
 print(np.mean(jaccard1), np.std(jaccard1))
@@ -199,21 +199,21 @@ plt.savefig(os.path.join("..", f"results_{ds_name}", "results_qap.pdf"))
 # plt.show()
 
 
-#### SOAM
+#### saom
 print()
-print("_______ SOAM _______________")
-print("Files in soam", len(soam_included))
+print("_______ saom _______________")
+print("Files in saom", len(saom_included))
 
 from functools import reduce
 
-df_merged = reduce(lambda left, right: pd.merge(left, right, on=["effect"], how="outer"), soam_tables)
+df_merged = reduce(lambda left, right: pd.merge(left, right, on=["effect"], how="outer"), saom_tables)
 
-p_table = df_merged[["p" + str(i) for i in soam_included]]
+p_table = df_merged[["p" + str(i) for i in saom_included]]
 print("P table shape", p_table.shape)
 p_table.fillna(1)
 p_table = np.array(p_table) < 0.05
 
-theta_table = (df_merged[["effect"] + ["theta" + str(i) for i in soam_included]]).set_index("effect")
+theta_table = (df_merged[["effect"] + ["theta" + str(i) for i in saom_included]]).set_index("effect")
 
 # Compute mean and standard deviations of effects
 new_df_dict = []
@@ -254,5 +254,5 @@ for i, effect in enumerate(theta_table.index):
     )
     # print()
 results = pd.DataFrame(new_df_dict)
-results.to_csv(os.path.join("..", f"results_{ds_name}", "results_soam.csv"))
+results.to_csv(os.path.join("..", f"results_{ds_name}", "results_saom.csv"))
 f.close()
