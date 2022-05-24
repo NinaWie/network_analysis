@@ -6,6 +6,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr, ttest_ind, mannwhitneyu
 import seaborn as sns
+import warnings
+warnings.simplefilter("ignore")
 
 matplotlib.rc("font", **{"size": 15})
 
@@ -64,9 +66,11 @@ for base_path in base_path_list:
             pvalues_3.append(qap["p-value"].values)
 
             if folder == "327" and j == 2:
-                print("USER 310 - QAP")
+                print("USER 327 - QAP")
                 print(qap)
-                print(qap.drop(columns=["exp(Est.)"]).to_latex(float_format="%.2f"))
+                qap_example = qap.drop(columns=["exp(Est.)"])
+                qap_example.to_csv(os.path.join("..", f"results_{ds_name}", "qap_user_327.csv"))
+                print(qap_example.to_latex(float_format="%.2f"))
         coefficients.append(coeff_3)
         qap_pvalues.append(pvalues_3)
 
@@ -92,11 +96,13 @@ for base_path in base_path_list:
             continue
 
         if folder == "327":
-            print("USER 310 - saom")
+            print("USER 327 - saom")
+            saom_example = saom.drop(
+                columns=["dependent", "jac1", "jac2", "sig.", "tconv_max", "Unnamed: 0"]
+            ).set_index("effect")
+            saom_example.to_csv(os.path.join("..", f"results_{ds_name}", "saom_user_327.csv"))
             print(
-                saom.drop(columns=["dependent", "jac1", "jac2", "sig.", "tconv_max", "Unnamed: 0"])
-                .set_index("effect")
-                .to_latex(float_format="%.2f")
+                saom_example.to_latex(float_format="%.2f")
             )
 
         part_saom = saom[["effect", "theta", "p.value"]]
@@ -115,12 +121,13 @@ print("__________________")
 print("Jaccard index analysis")
 print(np.mean(jaccard1), np.std(jaccard1))
 print(np.mean(jaccard2), np.std(jaccard2))
-plt.figure(figsize=(7, 5))
-plt.hist(jaccard1, bins=20)
-plt.savefig(os.path.join("..", f"results_{ds_name}", "hist_jac1.pdf"))
-plt.figure(figsize=(7, 5))
-plt.hist(jaccard2, bins=20)
-plt.savefig(os.path.join("..", f"results_{ds_name}", "hist_jac2.pdf"))
+# # Histograms for Jaccard indices:
+# plt.figure(figsize=(7, 5))
+# plt.hist(jaccard1, bins=20)
+# plt.savefig(os.path.join("..", f"results_{ds_name}", "hist_jac1.pdf"))
+# plt.figure(figsize=(7, 5))
+# plt.hist(jaccard2, bins=20)
+# plt.savefig(os.path.join("..", f"results_{ds_name}", "hist_jac2.pdf"))
 
 # Jaccard correlation
 print("Pearsonr", pearsonr(jaccard1, jaccard2))
@@ -152,6 +159,10 @@ print(np.around(np.mean(var_inter_user), 5))
 print("(By variable:)")
 print(np.around(np.mean(var_intra_user, axis=0), 5))
 print(np.around(np.mean(var_inter_user, axis=0), 5))
+intra_inter_df = pd.DataFrame(index = ["Intercept", "Distance", "Distance from home (alter)", "Same purpose", "Average"])
+intra_inter_df["Intra-user std"] = list(np.mean(var_intra_user, axis=0)) + [np.mean(var_intra_user)]
+intra_inter_df["Inter-user std"] = list(np.mean(var_inter_user, axis=0)) + [np.mean(var_inter_user)]
+intra_inter_df.to_csv(os.path.join("..", f"results_{ds_name}", "intra_inter_user.csv"))
 
 # Average over time bins
 avg_coeff = np.mean(coefficients, axis=1)
@@ -181,7 +192,7 @@ for j, col in enumerate(
     temp_df = pd.DataFrame()
     temp_df["temp"] = avg_coeff[:, j]
     temp_df["Dataset"] = dataset
-    histplt = sns.histplot(data=temp_df, x="temp", ax=ax, hue="Dataset", bins=bins, multiple="stack", stat="percent")
+    histplt = sns.histplot(data=temp_df, x="temp", ax=ax, hue="Dataset", bins=bins, multiple="stack", stat="count")
     if j > 0:
         ax.get_legend().remove()
     ax.set_title(col, fontsize=20)
@@ -192,7 +203,7 @@ for j, col in enumerate(
     plt.tight_layout()
     if "Distance" in col:
         plt.xlim(-0.28, 0.05)
-    plt.ylim(0, 43)
+    # plt.ylim(0, 43)
 
 # plt.legend(custom_lines, ["Green Class", "Foursquare"], loc=(-0.6, 2.3), ncol=2)
 plt.savefig(os.path.join("..", f"results_{ds_name}", "results_qap.pdf"))

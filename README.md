@@ -84,6 +84,20 @@ python analyze.py
 ```
 The input folders are hardcoded in the script.
 
+### Connecting results to paper figures and tables
+
+The `analyze.py` script creates a folder called `results_fourquare` in the main directory. The following points explain how the figures and tables in the paper correspond to these results:
+* Figure 1 in the paper: This is just an exemplary graph, and it is not created with this code.
+* Table 1 (QAP of a single user): Corresponds to `results_foursquare/qap_user_327.csv`
+* Figure 2 (QAP all users): `results_foursquare/results_qap.pdf`
+* Table 2 (QAP intra- vs inter-user variances): `results_foursquare/intra_inter_user.csv` (Note: the table in the paper reports averages over both datasets. The results just differ when using only the Foursquare dataset)
+* Table 3 (SAOM single user): `results_foursquare/saom_user_327.csv`
+* Table 4 (SAOM all users): `results_foursquare/results_saom.csv`
+* Figure 3 (Jaccard indices): `results_foursquare/correlation_jaccards.pdf`
+* Figure 4 (Goodness of fit): This figure is produced in the R scripts and is saved in `data/foursquare_120/327/gof_gd.pdf`, `data/foursquare_120/327/gof_id.pdf` and `data/foursquare_120/327/gof_od.pdf`
+
+The last file in the results directory, namely `results_fourquare/terminal.txt`, simply contains the command line output and the latex version of the tables.
+
 ## Acknowledgements:
 
 The Foursquares dataset user for reproducability here was taken from the following sources:
